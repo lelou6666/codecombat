@@ -721,9 +721,9 @@
     more_info_3: "is a good place to connect with fellow educators who are using CodeCombat."
 
   teachers_quote:
-    name: "Quote Form"
-    title: "Request a Quote"
-    subtitle: "Get CodeCombat in your classroom, club, school or district!"
+    name: "Demo Form" # {change}
+    title: "Request a Demo" # {change}
+    subtitle: "Get your students started in less than an hour. You'll be able to <strong>set up a class, add students, and monitor their progress</strong> as they learn computer science." # {change}
     email_exists: "User exists with this email."
     phone_number: "Phone number"
     phone_number_help: "Where can we reach you during the workday?"
@@ -751,7 +751,7 @@
     thanks_sub_header: "Thanks for expressing interest in CodeCombat for your school."
     thanks_p: "We'll be in touch soon! If you need to get in contact, you can reach us at:" # {change}
     finish_signup: "Finish creating your teacher account:"
-    finish_signup_p: "Try out the courses, manage classrooms, course guides for teachers and more!"
+    finish_signup_p: "Create an account to set up a class, add your students, and monitor their progress as they learn computer science."
     signup_with: "Sign up with:"
     conversion_warning: "WARNING: Your current account is a <em>Student Account</em>. Once you submit this form, your account will be converted into a Teacher Account."
 
