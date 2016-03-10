@@ -108,10 +108,7 @@ module.exports = class RequestQuoteView extends RootView
       errors.showNotyNetworkError(arguments...)
 
   onClickEmailExistsLoginLink: ->
-    modal = new AuthModal({
-      mode: 'login'
-      initialValues: { email: @trialRequest.get('properties')?.email }
-    })
+    modal = new AuthModal({ initialValues: { email: @trialRequest.get('properties')?.email } })
     @openModalView(modal)
 
   onTrialRequestSubmit: ->

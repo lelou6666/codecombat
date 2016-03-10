@@ -7,8 +7,8 @@ block content
     form#request-form(class=showDone ? 'hide' : '')
       .row
         .col-md-offset-2.col-md-8
-          h1.text-center(data-i18n="teachers_quote.title")
-          h2.text-center(data-i18n="teachers_quote.subtitle")
+          h3.text-center(data-i18n="teachers_quote.title")
+          h4.text-center(data-i18n="[html]teachers_quote.subtitle")
 
       if !me.isAnonymous()
         .row
@@ -168,7 +168,7 @@ block content
           textarea.form-control(rows=8, name="notes")
             
       #buttons-row.row.text-center
-        input#submit-request-btn.btn.btn-lg.btn-primary(type="submit" data-i18n="[value]common.send")
+        input#submit-request-btn.btn.btn-lg.btn-primary(type="submit" data-i18n="[value]teachers_quote.title")
         
         
     #form-submit-success.text-center(class=showDone ? '' : 'hide')

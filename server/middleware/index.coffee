@@ -5,4 +5,5 @@ module.exports =
   patchable: require './patchable'
   rest: require './rest'
   trialRequests: require './trial-requests'
+  users: require './users'
   versions: require './versions'
