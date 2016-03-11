@@ -8,7 +8,6 @@ TrialRequest = require '../models/TrialRequest'
 
 module.exports =
   post: wrap (req, res) ->
-    console.log 'post 1'
     if req.user.isAnonymous()
       email = req.body?.properties?.email
       throw new errors.UnprocessableEntity('Email not provided.') unless email
@@ -16,7 +15,6 @@ module.exports =
       user = yield User.findOne({emailLower: email})
       throw new errors.Conflict('User with this email already exists.') if user
 
-    console.log 'post 2'
     trialRequest = database.initDoc(req, TrialRequest)
     trialRequest.set 'applicant', req.user._id
     trialRequest.set 'created', new Date()
@@ -24,13 +22,11 @@ module.exports =
     database.assignBody(req, trialRequest)
     database.validateDoc(trialRequest)
     trialRequest = yield trialRequest.save()
-    console.log 'post 3'
     res.status(201).send(trialRequest.toObject({req: req}))
-    console.log 'post 4'
 
   put: wrap (req, res) ->
     trialRequest = yield database.getDocFromHandle(req, TrialRequest)
-    throw new errors.NotFound('Document not found.') if not trialRequest
+    throw new errors.NotFound('Trial Request not found.') if not trialRequest
     database.assignBody(req, trialRequest)
     trialRequest.set('reviewDate', new Date())
     trialRequest.set('reviewer', req.user.get('_id'))
@@ -40,9 +36,9 @@ module.exports =
 
   fetchByApplicant: wrap (req, res, next) ->
     applicantID = req.query.applicant
-    next() unless applicantID
+    return next() unless applicantID
     throw new errors.UnprocessableEntity('Bad applicant id') unless utils.isID(applicantID)
     throw new errors.Forbidden('May not fetch for anyone but yourself') unless req.user.id is applicantID
     trialRequests = yield TrialRequest.find({applicant: mongoose.Types.ObjectId(applicantID)})
-    trialRequests = [tr.toObject({req: req}) for tr in trialRequests]
+    trialRequests = (tr.toObject({req: req}) for tr in trialRequests)
     res.status(200).send(trialRequests)
