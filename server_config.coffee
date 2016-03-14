@@ -34,6 +34,9 @@ else
 config.apple =
   verifyURL: process.env.COCO_APPLE_VERIFY_URL or 'https://sandbox.itunes.apple.com/verifyReceipt'
 
+config.closeIO =
+  apiKey: process.env.COCO_CLOSEIO_API_KEY or ''
+
 config.stripe =
   secretKey: process.env.COCO_STRIPE_SECRET_KEY or 'sk_test_MFnZHYD0ixBbiBuvTlLjl2da'
 
@@ -79,6 +82,15 @@ config.salt = process.env.COCO_SALT or 'pepper'
 config.cookie_secret = process.env.COCO_COOKIE_SECRET or 'chips ahoy'
 
 config.isProduction = config.mongo.host isnt 'localhost'
+
+if process.env.COCO_PICOCTF
+  config.picoCTF = true
+  config.picoCTF_api_url = 'http://staging.picoctf.com/api'
+  config.picoCTF_login_URL = 'http://staging.picoctf.com'
+  config.picoCTF_auth = {username: 'picodev', password: 'pico2016rox!ftw'}
+else
+  config.picoCTF = false
+
 
 if not config.unittest and  not config.isProduction
   # change artificially slow down non-static requests for testing

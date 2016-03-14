@@ -1,6 +1,8 @@
 require '../common'
-request = require 'request'
-User = require '../../../server/users/User'
+utils = require '../utils'
+_ = require 'lodash'
+Promise = require 'bluebird'
+nock = require 'nock'
 
 urlLogin = getURL('/auth/login')
 urlReset = getURL('/auth/reset')
@@ -200,3 +202,136 @@ describe '/auth/name', ->
       expect(response.body.name).not.toBe 'joe'
       expect(response.body.name.length).toBe 4 # 'joe' and a random number
       done()
+
+      
+describe 'POST /auth/login-facebook', ->
+  beforeEach utils.wrap (done) ->
+    yield utils.clearModels([User])
+    done()
+    
+  afterEach -> 
+    nock.cleanAll()
+  
+  url = getURL('/auth/login-facebook')
+  it 'takes facebookID and facebookAccessToken and logs the user in', utils.wrap (done) ->
+    nock('https://graph.facebook.com').get('/me').query({access_token: 'abcd'}).reply(200, { id: '1234' })
+    yield new User({name: 'someone', facebookID: '1234'}).save()
+    [res, body] = yield request.postAsync url, { json: { facebookID: '1234', facebookAccessToken: 'abcd' }}
+    expect(res.statusCode).toBe(200)
+    done()
+    
+  it 'returns 422 if no token or id is provided', utils.wrap (done) ->
+    [res, body] = yield request.postAsync url
+    expect(res.statusCode).toBe(422)
+    done()
+  
+  it 'returns 422 if the token is invalid', utils.wrap (done) ->
+    nock('https://graph.facebook.com').get('/me').query({access_token: 'abcd'}).reply(400, {})
+    yield new User({name: 'someone', facebookID: '1234'}).save()
+    [res, body] = yield request.postAsync url, { json: { facebookID: '1234', facebookAccessToken: 'abcd' }}
+    expect(res.statusCode).toBe(422)
+    done()
+  
+  it 'returns 404 if the user does not already exist', utils.wrap (done) ->
+    nock('https://graph.facebook.com').get('/me').query({access_token: 'abcd'}).reply(200, { id: '1234' })
+    [res, body] = yield request.postAsync url, { json: { facebookID: '1234', facebookAccessToken: 'abcd' }}
+    expect(res.statusCode).toBe(404)
+    done()
+
+
+describe 'POST /auth/login-gplus', ->
+  beforeEach utils.wrap (done) ->
+    yield utils.clearModels([User])
+    done()
+
+  afterEach ->
+    nock.cleanAll()
+
+  url = getURL('/auth/login-gplus')
+  it 'takes gplusID and gplusAccessToken and logs the user in', utils.wrap (done) ->
+    nock('https://www.googleapis.com').get('/oauth2/v2/userinfo').query({access_token: 'abcd'}).reply(200, { id: '1234' })
+    yield new User({name: 'someone', gplusID: '1234'}).save()
+    [res, body] = yield request.postAsync url, { json: { gplusID: '1234', gplusAccessToken: 'abcd' }}
+    expect(res.statusCode).toBe(200)
+    done()
+
+  it 'returns 422 if no token or id is provided', utils.wrap (done) ->
+    [res, body] = yield request.postAsync url
+    expect(res.statusCode).toBe(422)
+    done()
+
+  it 'returns 422 if the token is invalid', utils.wrap (done) ->
+    nock('https://www.googleapis.com').get('/oauth2/v2/userinfo').query({access_token: 'abcd'}).reply(400, {})
+    yield new User({name: 'someone', gplusID: '1234'}).save()
+    [res, body] = yield request.postAsync url, { json: { gplusID: '1234', gplusAccessToken: 'abcd' }}
+    expect(res.statusCode).toBe(422)
+    done()
+
+  it 'returns 404 if the user does not already exist', utils.wrap (done) ->
+    nock('https://www.googleapis.com').get('/oauth2/v2/userinfo').query({access_token: 'abcd'}).reply(200, { id: '1234' })
+    [res, body] = yield request.postAsync url, { json: { gplusID: '1234', gplusAccessToken: 'abcd' }}
+    expect(res.statusCode).toBe(404)
+    done()
+          
+      
+describe 'POST /auth/spy', ->
+  beforeEach utils.wrap (done) ->
+    yield utils.clearModels([User])
+    @admin = yield utils.initAdmin()
+    @user1 = yield utils.initUser({name: 'Test User 1'})
+    @user2 = yield utils.initUser({name: 'Test User 2'})
+    done()
+  
+  it 'logs in an admin as an arbitrary user', utils.wrap (done) ->
+    yield utils.loginUser(@admin)
+    [res, body] = yield request.postAsync {uri: getURL('/auth/spy'), json: {user: @user1.id}}
+    expect(res.statusCode).toBe(200)
+    expect(body._id).toBe(@user1.id)
+    [res, body] = yield request.getAsync {uri: getURL('/auth/whoami'), json: true}
+    expect(body._id).toBe(@user1.id)
+    done()
+
+  it 'accepts the user\'s email as input', utils.wrap (done) ->
+    yield utils.loginUser(@admin)
+    [res, body] = yield request.postAsync {uri: getURL('/auth/spy'), json: {user: @user1.get('email')}}
+    expect(res.statusCode).toBe(200)
+    expect(body._id).toBe(@user1.id)
+    done()
+    
+  it 'accepts the user\'s username as input', utils.wrap (done) ->
+    yield utils.loginUser(@admin)
+    [res, body] = yield request.postAsync {uri: getURL('/auth/spy'), json: {user: @user1.get('name')}}
+    expect(res.statusCode).toBe(200)
+    expect(body._id).toBe(@user1.id)
+    done()
+    
+  it 'does not work for anonymous users', utils.wrap (done) ->
+    [res, body] = yield request.postAsync {uri: getURL('/auth/spy'), json: {user: @user1.get('name')}}
+    expect(res.statusCode).toBe(401)
+    done()
+    
+  it 'does not work for non-admins', utils.wrap (done) ->
+    yield utils.loginUser(@user1)
+    [res, body] = yield request.postAsync {uri: getURL('/auth/spy'), json: {user: @user1.get('name')}}
+    expect(res.statusCode).toBe(403)
+    done()
+
+describe 'POST /auth/stop-spying', ->
+  beforeEach utils.wrap (done) ->
+    yield utils.clearModels([User])
+    @admin = yield utils.initAdmin()
+    @user = yield utils.initUser()
+    yield utils.loginUser(@admin)
+    [res, body] = yield request.postAsync {uri: getURL('/auth/spy'), json: {user: @user.id}}
+    expect(res.statusCode).toBe(200)
+    done()
+  
+  it 'it reverts the spying user back to the admin', utils.wrap (done) ->
+    [res, body] = yield request.getAsync {uri: getURL('/auth/whoami'), json: true}
+    expect(body._id).toBe(@user.id)
+    [res, body] = yield request.postAsync {uri: getURL('/auth/stop-spying'), json: true}
+    expect(res.statusCode).toBe(200)
+    expect(body._id).toBe(@admin.id)
+    [res, body] = yield request.getAsync {uri: getURL('/auth/whoami'), json: true}
+    expect(body._id).toBe(@admin.id)
+    done()

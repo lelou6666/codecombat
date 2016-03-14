@@ -32,6 +32,7 @@ UserSchema.index({'stripe.subscriptionID': 1}, {unique: true, sparse: true})
 UserSchema.index({'siteref': 1}, {name: 'siteref index', sparse: true})
 UserSchema.index({'schoolName': 1}, {name: 'schoolName index', sparse: true})
 UserSchema.index({'country': 1}, {name: 'country index', sparse: true})
+UserSchema.index({'role': 1}, {name: 'role index', sparse: true})
 
 UserSchema.post('init', ->
   @set('anonymous', false) if @get('email')
@@ -44,6 +45,14 @@ UserSchema.methods.isInGodMode = ->
 UserSchema.methods.isAdmin = ->
   p = @get('permissions')
   return p and 'admin' in p
+  
+UserSchema.methods.hasPermission = (neededPermissions) ->
+  permissions = @get('permissions') or []
+  if _.contains(permissions, 'admin')
+    return true
+  if _.isString(neededPermissions)
+    neededPermissions = [neededPermissions]
+  return _.size(_.intersection(permissions, neededPermissions))
 
 UserSchema.methods.isArtisan = ->
   p = @get('permissions')
@@ -239,6 +248,16 @@ UserSchema.methods.isPremium = ->
   return true if @hasSubscription()
   return false
 
+UserSchema.methods.formatEntity = (req, publicOnly=false) ->
+  obj = @toObject()
+  serverProperties = ['passwordHash', 'emailLower', 'nameLower', 'passwordReset', 'lastIP']
+  delete obj[prop] for prop in serverProperties
+  candidateProperties = ['jobProfile', 'jobProfileApproved', 'jobProfileNotes']
+  delete obj[prop] for prop in candidateProperties
+  includePrivates = not publicOnly and (req.user and (req.user.isAdmin() or req.user._id.equals(@_id)))
+  delete obj[prop] for prop in User.privateProperties unless includePrivates
+  return obj
+
 UserSchema.methods.isOnPremiumServer = ->
   @get('country') in ['china', 'brazil']
 
@@ -315,7 +334,7 @@ UserSchema.statics.privateProperties = [
   'permissions', 'email', 'mailChimp', 'firstName', 'lastName', 'gender', 'facebookID',
   'gplusID', 'music', 'volume', 'aceConfig', 'employerAt', 'signedEmployerAgreement',
   'emailSubscriptions', 'emails', 'activity', 'stripe', 'stripeCustomerID', 'chinaVersion', 'country',
-  'schoolName', 'ageRange'
+  'schoolName', 'ageRange', 'role'
 ]
 UserSchema.statics.jsonSchema = jsonschema
 UserSchema.statics.editableProperties = [
@@ -323,9 +342,23 @@ UserSchema.statics.editableProperties = [
   'firstName', 'lastName', 'gender', 'ageRange', 'facebookID', 'gplusID', 'emails',
   'testGroupNumber', 'music', 'hourOfCode', 'hourOfCodeComplete', 'preferredLanguage',
   'wizard', 'aceConfig', 'autocastDelay', 'lastLevel', 'jobProfile', 'savedEmployerFilterAlerts',
-  'heroConfig', 'iosIdentifierForVendor', 'siteref', 'referrer', 'schoolName'
+  'heroConfig', 'iosIdentifierForVendor', 'siteref', 'referrer', 'schoolName', 'role'
 ]
 
+UserSchema.statics.serverProperties = ['passwordHash', 'emailLower', 'nameLower', 'passwordReset', 'lastIP']
+UserSchema.statics.candidateProperties = [ 'jobProfile', 'jobProfileApproved', 'jobProfileNotes']
+
+UserSchema.set('toObject', {
+  transform: (doc, ret, options) ->
+    req = options.req
+    return ret unless req # TODO: Make deleting properties the default, but the consequences are far reaching
+    publicOnly = options.publicOnly
+    delete ret[prop] for prop in User.serverProperties
+    includePrivates = not publicOnly and (req.user and (req.user.isAdmin() or req.user._id.equals(doc._id) or req.session.amActually is doc.id))
+    delete ret[prop] for prop in User.privateProperties unless includePrivates
+    delete ret[prop] for prop in User.candidateProperties
+    return ret
+})
 UserSchema.plugin plugins.NamedPlugin
 
 module.exports = User = mongoose.model('User', UserSchema)

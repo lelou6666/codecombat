@@ -20,6 +20,10 @@ hipchat = require './server/hipchat'
 global.tv4 = require 'tv4' # required for TreemaUtils to work
 global.jsondiffpatch = require 'jsondiffpatch'
 global.stripe = require('stripe')(config.stripe.secretKey)
+errors = require './server/commons/errors'
+request = require 'request'
+Promise = require 'bluebird'
+Promise.promisifyAll(request, {multiArgs: true})
 
 
 productionLogging = (tokens, req, res) ->
@@ -48,9 +52,21 @@ developmentLogging = (tokens, req, res) ->
 setupErrorMiddleware = (app) ->
   app.use (err, req, res, next) ->
     if err
+      if err.name is 'MongoError' and err.code is 11000
+        err = new errors.Conflict('MongoDB conflict error.')
+      if err.code is 422 and err.response
+        err = new errors.UnprocessableEntity(err.response)
+      if err.code is 409 and err.response
+        err = new errors.Conflict(err.response)
+      
+      # TODO: Make all errors use this
+      if err instanceof errors.NetworkError
+        return res.status(err.code).send(err.toJSON())
+      
       if err.status and 400 <= err.status < 500
         res.status(err.status).send("Error #{err.status}")
         return
+        
       res.status(err.status ? 500).send(error: "Something went wrong!")
       message = "Express error: #{req.method} #{req.path}: #{err.message}"
       log.error "#{message}, stack: #{err.stack}"
@@ -72,14 +88,21 @@ setupExpressMiddleware = (app) ->
   app.use(useragent.express())
 
   app.use(express.favicon())
-  app.use(express.cookieParser(config.cookie_secret))
+  app.use(express.cookieParser())
   app.use(express.bodyParser())
   app.use(express.methodOverride())
-  app.use(express.cookieSession({secret:'defenestrate'}))
+  app.use(express.cookieSession({
+    key:'codecombat.sess'
+    secret:config.cookie_secret
+  }))
 
 setupPassportMiddleware = (app) ->
   app.use(authentication.initialize())
-  app.use(authentication.session())
+  if config.picoCTF
+    app.use authentication.authenticate('local', failureRedirect: config.picoCTF_login_URL)
+    require('./server/lib/picoctf').init app
+  else
+    app.use(authentication.session())
 
 setupCountryRedirectMiddleware = (app, country="china", countryCode="CN", languageCode="zh", serverID="tokyo") ->
   shouldRedirectToCountryServer = (req) ->
@@ -157,7 +180,13 @@ setupFallbackRouteToIndex = (app) ->
       log.error "Error modifying main.html: #{err}" if err
       # insert the user object directly into the html so the application can have it immediately. Sanitize </script>
       user = if req.user then JSON.stringify(UserHandler.formatEntity(req, req.user)).replace(/\//g, '\\/') else '{}'
+      
+      data = data.replace '"serverConfigTag"', JSON.stringify
+        picoCTF: config.picoCTF,
+        production: config.isProduction
+        
       data = data.replace('"userObjectTag"', user)
+      data = data.replace('"amActuallyTag"', JSON.stringify(req.session.amActually))
       res.header 'Cache-Control', 'no-cache, no-store, must-revalidate'
       res.header 'Pragma', 'no-cache'
       res.header 'Expires', 0

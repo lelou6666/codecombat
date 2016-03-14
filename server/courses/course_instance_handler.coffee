@@ -11,6 +11,7 @@ PrepaidHandler = require '../prepaids/prepaid_handler'
 User = require '../users/User'
 UserHandler = require '../users/user_handler'
 utils = require '../../app/core/utils'
+{objectIdFromTimestamp} = require '../lib/utils'
 sendwithus = require '../sendwithus'
 mongoose = require 'mongoose'
 
@@ -38,6 +39,7 @@ CourseInstanceHandler = class CourseInstanceHandler extends Handler
     return @removeMember(req, res, args[0]) if req.method is 'DELETE' and args[1] is 'members'
     return @getMembersAPI(req, res, args[0]) if args[1] is 'members'
     return @inviteStudents(req, res, args[0]) if relationship is 'invite_students'
+    return @getRecentAPI(req, res) if relationship is 'recent'
     return @redeemPrepaidCodeAPI(req, res) if args[1] is 'redeem_prepaid'
     return @getMyCourseLevelSessionsAPI(req, res, args[0]) if args[1] is 'my-course-level-sessions'
     return @findByLevel(req, res, args[2]) if args[1] is 'find_by_level'
@@ -131,7 +133,14 @@ CourseInstanceHandler = class CourseInstanceHandler extends Handler
       Course.findById req.body.courseID, (err, course) =>
         return @sendDatabaseError(res, err) if err
         return @sendNotFoundError(res, 'Course not found') unless course
-        super(req, res)
+        q = { 
+          courseID: mongoose.Types.ObjectId(req.body.courseID)
+          classroomID: mongoose.Types.ObjectId(req.body.classroomID)
+        }
+        CourseInstance.findOne(q).exec (err, doc) =>
+          return @sendDatabaseError(res, err) if err
+          return @sendSuccess(res, @formatEntity(req, doc)) if doc
+          super(req, res)
 
   makeNewInstance: (req) ->
     doc = new CourseInstance({
@@ -192,6 +201,33 @@ CourseInstanceHandler = class CourseInstanceHandler extends Handler
         return @sendDatabaseError(res, err) if err
         cleandocs = (UserHandler.formatEntity(req, doc) for doc in users)
         @sendSuccess(res, cleandocs)
+
+  getRecentAPI: (req, res) ->
+    return @sendUnauthorizedError(res) unless req.user?.isAdmin()
+    query = {$and: [{name: {$ne: 'Single Player'}}, {hourOfCode: {$ne: true}}]}
+    query["$and"].push(_id: {$gte: objectIdFromTimestamp(req.body.startDay + "T00:00:00.000Z")}) if req.body.startDay?
+    query["$and"].push(_id: {$lt: objectIdFromTimestamp(req.body.endDay + "T00:00:00.000Z")}) if req.body.endDay?
+    CourseInstance.find query, {courseID: 1, members: 1, ownerID: 1}, (err, courseInstances) =>
+      return @sendDatabaseError(res, err) if err
+      userIDs = []
+      for courseInstance in courseInstances
+        if members = courseInstance.get('members')
+          userIDs.push(userID) for userID in members
+
+      User.find {_id: {$in: userIDs}}, {coursePrepaidID: 1}, (err, users) =>
+        return @sendDatabaseError(res, err) if err
+        prepaidIDs = []
+        for user in users
+          if prepaidID = user.get('coursePrepaidID')
+            prepaidIDs.push(prepaidID)
+
+        Prepaid.find {_id: {$in: prepaidIDs}}, {properties: 1}, (err, prepaids) =>
+          return @sendDatabaseError(res, err) if err
+          data =
+            courseInstances: (@formatEntity(req, courseInstance) for courseInstance in courseInstances)
+            students: (@formatEntity(req, user) for user in users)
+            prepaids: (@formatEntity(req, prepaid) for prepaid in prepaids)
+          @sendSuccess(res, data)
 
   inviteStudents: (req, res, courseInstanceID) ->
     return @sendUnauthorizedError(res) if not req.user?

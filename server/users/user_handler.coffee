@@ -39,19 +39,20 @@ UserHandler = class UserHandler extends Handler
 
   getEditableProperties: (req, document) ->
     props = super req, document
-    props.push 'permissions' unless config.isProduction
+    props.push 'permissions' unless config.isProduction or global.testing
     props.push 'jobProfileApproved', 'jobProfileNotes','jobProfileApprovedDate' if req.user.isAdmin()  # Admins naturally edit these
     props.push @privateProperties... if req.user.isAdmin()  # Admins are mad with power
     props
 
   formatEntity: (req, document, publicOnly=false) =>
+    # TODO: Delete. This function is duplicated in server User model toObject transform.
     return null unless document?
     obj = document.toObject()
-    delete obj[prop] for prop in serverProperties
-    includePrivates = not publicOnly and (req.user and (req.user.isAdmin() or req.user._id.equals(document._id)))
-    delete obj[prop] for prop in @privateProperties unless includePrivates
+    delete obj[prop] for prop in User.serverProperties
+    includePrivates = not publicOnly and (req.user and (req.user.isAdmin() or req.user._id.equals(document._id) or req.session.amActually is document.id))
+    delete obj[prop] for prop in User.privateProperties unless includePrivates
     includeCandidate = not publicOnly and (includePrivates or (obj.jobProfile?.active and req.user and ('employer' in (req.user.get('permissions') ? [])) and @employerCanViewCandidate req.user, obj))
-    delete obj[prop] for prop in candidateProperties unless includeCandidate
+    delete obj[prop] for prop in User.candidateProperties unless includeCandidate
     return obj
 
   waterfallFunctions: [
@@ -309,6 +310,7 @@ UserHandler = class UserHandler extends Handler
     return @getByIDs(req, res) if args[1] is 'users'
     return @getNamesByIDs(req, res) if args[1] is 'names'
     return @getPrepaidCodes(req, res) if args[1] is 'prepaid_codes'
+    return @getSchoolCounts(req, res) if args[1] is 'school_counts'
     return @nameToID(req, res, args[0]) if args[1] is 'nameToID'
     return @getLevelSessionsForEmployer(req, res, args[0]) if args[1] is 'level.sessions' and args[2] is 'employer'
     return @getLevelSessions(req, res, args[0]) if args[1] is 'level.sessions'
@@ -463,6 +465,27 @@ UserHandler = class UserHandler extends Handler
     orQuery = [{ creator: req.user._id }, { 'redeemers.userID' :  req.user._id }]
     Prepaid.find({}).or(orQuery).exec (err, documents) =>
       @sendSuccess(res, documents)
+
+  getSchoolCounts: (req, res) ->
+    return @sendSuccess(res, []) unless req.user?.isAdmin()
+    minCount = req.body.minCount ? 20
+    query = {$and: [
+        {anonymous: false},
+        {schoolName: {$exists: true}},
+        {schoolName: {$ne: ''}}
+        ]}
+    User.find(query, {schoolName: 1}).exec (err, documents) =>
+      return @sendDatabaseError(res, err) if err
+      schoolCountMap = {}
+      for doc in documents
+        schoolName = doc.get('schoolName')
+        schoolCountMap[schoolName] ?= 0;
+        schoolCountMap[schoolName]++;
+      schoolCounts = []
+      for schoolName, count of schoolCountMap
+        continue unless count >= minCount
+        schoolCounts.push schoolName: schoolName, count: count
+      @sendSuccess(res, schoolCounts)
 
   agreeToCLA: (req, res) ->
     return @sendForbiddenError(res) unless req.user

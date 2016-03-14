@@ -1,7 +1,5 @@
 require '../common'
-request = require 'request'
-User = require '../../../server/users/User'
-
+utils = require '../utils'
 urlUser = '/db/user'
 
 
@@ -155,6 +153,13 @@ describe 'PUT /db/user', ->
       form.append('_id', joe.id)
       form.append('email', 'farghlarghlfarghlarghlfarghlarghlfarghlarghlfarghlarghlfarghlar
 ghlfarghlarghlfarghlarghlfarghlarghlfarghlarghlfarghlarghlfarghlarghlfarghlarghlfarghlarghl')
+      
+  it 'does not allow normals to edit their permissions', utils.wrap (done) ->
+    user = yield utils.initUser()
+    yield utils.loginUser(user)
+    [res, body] = yield request.putAsync { uri: getURL('/db/user/'+user.id), json: { permissions: ['admin'] }}
+    expect(_.contains(body.permissions, 'admin')).toBe(false)
+    done()
 
   it 'logs in as admin', (done) ->
     loginAdmin -> done()
@@ -385,18 +390,19 @@ describe 'Statistics', ->
       expect(carl.get User.statsMapping.edits.article).toBeUndefined()
       article.creator = carl.get 'id'
 
-      # Create major version 1.0
+      # Create major version 0.0
       request.post {uri:url, json: article}, (err, res, body) ->
         expect(err).toBeNull()
-        expect(res.statusCode).toBe 200
+        expect(res.statusCode).toBe 201
         article = body
 
         User.findById carl.get('id'), (err, guy) ->
           expect(err).toBeNull()
           expect(guy.get User.statsMapping.edits.article).toBe 1
 
-          # Create minor version 1.1
-          request.post {uri:url, json: article}, (err, res, body) ->
+          # Create minor version 0.1
+          newVersionURL = "#{url}/#{article._id}/new-version"
+          request.post {uri:newVersionURL, json: article}, (err, res, body) ->
             expect(err).toBeNull()
 
             User.findById carl.get('id'), (err, guy) ->
