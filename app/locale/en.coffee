@@ -67,7 +67,8 @@
     request_demo: "Request a Demo"
     create_a_class: "Create a Class"
     setup_a_class: "Set Up a Class"
-    have_an_account: "Already have an account?"
+    have_an_account: "Have an account?" # {change}
+    log_in: "Log In"
     logged_in_as: "You are currently logged in as"
     view_my_classes: "View my classes"
     computer_science: "Computer science courses for all ages"
@@ -747,6 +748,7 @@
     middle_school: "Middle School"
     college_plus: "College or higher"
     anything_else: "Anything else we should know?"
+<<<<<<< HEAD
     thanks_header: "Request Received!" # {change}
     thanks_sub_header: "Thanks for expressing interest in CodeCombat for your school."
     thanks_p: "We'll be in touch soon! If you need to get in contact, you can reach us at:" # {change}
@@ -754,6 +756,13 @@
     finish_signup_p: "Create an account to set up a class, add your students, and monitor their progress as they learn computer science."
     signup_with: "Sign up with:"
     conversion_warning: "WARNING: Your current account is a <em>Student Account</em>. Once you submit this form, your account will be converted into a Teacher Account."
+=======
+    thanks_header: "Thanks for requesting a demo!" # {change}
+    thanks_p: "We'll be in touch soon. Questions? Email us:"
+    thanks_anon: "Log in or create an account to set up a class, add your students, and monitor their progress as they learn computer science." # {change}
+    thanks_logged_in: "Set up a class, add your students, and monitor their progress as they learn computer science." # {change}
+    setup_a_class: "Set Up a Class"
+>>>>>>> refs/remotes/codecombat/master
 
   versions:
     save_version_title: "Save New Version"
@@ -1153,6 +1162,7 @@
     add_students1: "add students"
     view_edit: "view/edit"
     students_enrolled: "students enrolled"
+    students_assigned: "students assigned"
     length: "Length:"
 
   classes:
