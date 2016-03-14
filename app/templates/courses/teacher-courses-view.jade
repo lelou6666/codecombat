@@ -17,6 +17,7 @@ block content
       .course.row
         .col-sm-9
           +course-info(course)
+<<<<<<< HEAD
         .col-sm-3
           .play-level-form
             .form-group
@@ -51,6 +52,71 @@ block content
       
             
             
+=======
+        if i < courses.length
+          - course = courses[i];
+          - i++;
+          .col-md-6
+            +course-info(course)
+
+block footer
+
+mixin classroom(classroom)
+  .row
+    - var classMemberCount = classroom.get('members') ? classroom.get('members').length : 0;
+    if classMemberCount > 0
+      .col-md-8
+        p
+          span.spr.class-name= classroom.get('name')
+          if classroom.get('aceConfig') && classroom.get('aceConfig').language === 'javascript'
+            span.spr.class-name (JavaScript)
+          else
+            span.spr.class-name (Python)
+          a.edit-classroom-small(data-i18n="courses.edit_settings", data-classroom-id="#{classroom.id}")
+          if classMemberCount === 1
+            p There is #{classMemberCount} student in this class.
+          else
+            p There are #{classMemberCount} students in this class.
+          .active-courses(data-i18n="courses.active_courses")
+          - var courseInstances = view.courseInstances.where({classroomID: classroom.id});
+          table.active-course-container
+            each courseInstance in courseInstances
+              tr
+                +course(courseInstance, classMemberCount)
+    else
+      .col-md-12
+        p
+          span.spr.class-name= classroom.get('name')
+          if classroom.get('aceConfig') && classroom.get('aceConfig').language === 'javascript'
+            span.spr.class-name (JavaScript)
+          else
+            span.spr.class-name (Python)
+          a.edit-classroom-small(data-i18n="courses.edit_settings", data-classroom-id="#{classroom.id}")
+        .no-students(data-i18n="courses.no_students")
+        .text-center
+          button.btn.btn-info.uppercase.btn-add-students(data-classroom-id="#{classroom.id}", data-i18n="courses.add_students1")
+        br
+    if classMemberCount > 0
+      .col-md-4.text-center
+        .class-count= classMemberCount
+        .active-courses(style='margin:6px;', data-i18n="courses.students1")
+        a.btn.btn-info.uppercase(href='/courses/#{classroom.id}', data-i18n="courses.view_edit")
+  .row
+    .col-md-12
+      .divider
+
+mixin course(courseInstance, classMemberCount)
+  - var courseMemberCount = courseInstance.get('members') ? courseInstance.get('members').length : 0;
+  if courseMemberCount > 0
+    - var course = view.courses.get(courseInstance.get('courseID'));
+    td
+      span.course-name= course.get('name')
+    td
+      span.course-enrolled
+        span #{courseMemberCount} / #{classMemberCount}
+        span.spl(data-i18n="courses.students_assigned")
+
+>>>>>>> refs/remotes/codecombat/master
 mixin course-info(course)
   .course-info
     .text-h2.semibold

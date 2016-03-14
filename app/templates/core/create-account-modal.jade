@@ -7,8 +7,11 @@
       span.glyphicon.glyphicon-remove
 
   .auth-form-content
+    if view.options.showRequiredError
+      #required-error-alert.alert.alert-success
+        span(data-i18n="signup.required")
     if view.options.showSignupRationale
-      .alert.alert-info
+      #signup-rationale-alert.alert.alert-info
         span(data-i18n="play_level.victory_sign_up_poke")
 
     #email-password-row.row
@@ -87,7 +90,7 @@
                 span(data-i18n="signup.optional")
                 | ):
             .input-border
-              input#school-input.input-large.form-control(name="classCode", value=view.previousFormInputs.classCode || '', tabindex=5)
+              input#class-code-input.input-large.form-control(name="classCode", value=view.previousFormInputs.classCode || '', tabindex=5)
               
         .col-md-6
           .form-group.checkbox
