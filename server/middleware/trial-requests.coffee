@@ -5,6 +5,10 @@ Promise = require 'bluebird'
 database = require '../commons/database'
 mongoose = require 'mongoose'
 TrialRequest = require '../models/TrialRequest'
+<<<<<<< HEAD
+=======
+User = require '../models/User'
+>>>>>>> refs/remotes/codecombat/master
 
 module.exports =
   post: wrap (req, res) ->

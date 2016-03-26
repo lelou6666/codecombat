@@ -25,8 +25,8 @@
     im_a_student: "I'm a Student"
     learn_more: "Learn more"
     classroom_in_a_box: "A classroom in-a-box for teaching computer science."
-    codecombat_is: "CodeCombat is a platform <strong>for students</strong> to learn computer science while playing through a real game." # {change}
-    our_courses: "Our courses have been specifically playtested to <strong>excel in the classroom</strong>, even by teachers with little to no prior programming experience." # {change}
+    codecombat_is: "CodeCombat is a platform <strong>for students</strong> to learn computer science while playing through a real game."
+    our_courses: "Our courses have been specifically playtested to <strong>excel in the classroom</strong>, even by teachers with little to no prior programming experience."
     top_screenshots_hint: "Students write code and see their changes update in real-time"
     designed_with: "Designed with teachers in mind"
     real_code: "Real, typed code"
@@ -67,7 +67,7 @@
     request_demo: "Request a Demo"
     create_a_class: "Create a Class"
     setup_a_class: "Set Up a Class"
-    have_an_account: "Have an account?" # {change}
+    have_an_account: "Have an account?"
     log_in: "Log In"
     logged_in_as: "You are currently logged in as"
     view_my_classes: "View my classes"
@@ -81,6 +81,24 @@
     boast: "Boasts riddles that are complex enough to fascinate gamers and coders alike."
     winning: "A winning combination of RPG gameplay and programming homework that pulls off making kid-friendly education legitimately enjoyable."
     run_class:"Everything you need to run a computer science class in your school today, no CS background required."
+    teachers: "Teachers!"
+    teachers_and_educators: "Teachers & Educators"
+    class_in_box: "Learn how our classroom-in-a-box platform fits into your curriculum."
+    get_started: "Get Started"
+    students: "Students:"
+    join_class: "Join Class"
+    role: "Your role:"
+    student_count: "Number of students:"
+    start_playing_for_free: "Start Playing for Free!"
+    students_and_players: "Students & Players"
+    goto_classes: "Go to my Classes"
+    educator_wiki: "Educator wiki"
+    view_profile: "View My Profile"
+    login_switch: "Have an account?"
+    check_out_wiki: "Check out our new educator Wiki"
+    want_coco: "Want CodeCombat at your school?"
+    form_select_role: "Select primary role"
+    form_select_range: "Select class size"
 
   nav:
     play: "Levels"  # The top nav bar entry where players choose which levels to play
@@ -93,7 +111,6 @@
     profile: "Profile"
     stats: "Stats"
     code: "Code"
-    admin: "Admin"  # Only shows up when you are an admin
     home: "Home"
     contribute: "Contribute"
     legal: "Legal"
@@ -107,6 +124,17 @@
     create_a_class: "Create a Class"
     other: "Other"
     learn_to_code: "Learn to Code!"
+    toggle_nav: "Toggle navigation"
+    jobs: "Jobs"
+    schools: "Schools"
+    educator_wiki: "Educator Wiki"
+    request_quote: "Request a Quote"
+    get_involved: "Get Involved"
+    open_source: "Open source (GitHub)"
+    support: "Support"
+    faqs: "FAQs"
+    help_pref: "Need help? Email"
+    help_suff: "and we'll get in touch!"
 
   modal:
     close: "Close"
@@ -431,6 +459,18 @@
     tip_compiler_ignores_comments: "Sometimes I think that the compiler ignores my comments."
     tip_understand_recursion: "The only way to understand recursion is to understand recursion."
     tip_life_and_polymorphism: "Open Source is like a totally polymorphic heterogeneous structure: All types are welcome."
+    tip_mistakes_proof_of_trying: "Mistakes in your code are just proof that you are trying."
+    tip_adding_orgres: "Rounding up ogres."
+    tip_sharpening_swords: "Sharpening the swords."
+    tip_ratatouille: "You must not let anyone define your limits because of where you come from. Your only limit is your soul. - Gusteau, Ratatouille"
+    tip_nemo: "When life gets you down, want to know what you've gotta do? Just keep swimming, just keep swimming. - Dory, Finding Nemo"
+    tip_internet_weather: "Just move to the internet, it's great here. We get to live inside where the weather is always awesome. - John Green"
+    tip_nerds: "Nerds are allowed to love stuff, like jump-up-and-down-in-the-chair-can't-control-yourself love it. - John Green"
+    tip_self_taught: "I taught myself 90% of what I've learned. And that's normal! - Hank Green"
+    tip_luna_lovegood: "Don't worry, you're just as sane as I am. - Luna Lovegood"
+    tip_good_idea: "The best way to have a good idea is to have a lot of ideas. - Linus Pauling"
+    tip_programming_not_about_computers: "Computer Science is no more about computers than astronomy is about telescopes. - Edsger Dijkstra"
+    tip_mulan: "Believe you can, then you will. - Mulan"
 
   game_menu:
     inventory_tab: "Inventory"
@@ -489,13 +529,14 @@
 
   subscribe:
     comparison_blurb: "Sharpen your skills with a CodeCombat subscription!"
-    feature1: "110+ basic levels across 4 worlds"
+    feature1: "125+ basic levels across 4 worlds"
     feature2: "10 powerful <strong>new heroes</strong> with unique skills!"
-    feature3: "80+ bonus levels"
+    feature3: "85+ bonus levels"
     feature4: "<strong>{{gems}} bonus gems</strong> every month!"
     feature5: "Video tutorials"
     feature6: "Premium email support"
     feature7: "Private <strong>Clans</strong>"
+    feature8: "<strong>No ads!</strong>"
     free: "Free"
     month: "month"
     must_be_logged: "You must be logged in first. Please create an account or log in from the menu above."
@@ -663,8 +704,6 @@
     retrostyle_blurb: "RetroStyle Games"
     jose_title: "Music"
     jose_blurb: "Taking Off"
-    carlos_title: "Region Manager, Brazil"
-    carlos_blurb: "Celery Man"
     community_title: "...and our open-source community"
     community_subtitle: "Over 450 contributors have helped build CodeCombat, with more joining every week!"
     community_description_1: "CodeCombat is a community project, with hundreds of players volunteering to create levels, contribute to our code to add features, fix bugs, playtest, and even translate the game into 50 languages so far. Employees, contributors and the site gain by sharing ideas and pooling effort, as does the open source community in general. The site is built on numerous open source projects, and we are open sourced to give back to the community and provide code-curious players a familiar project to explore and experiment with. Anyone can join the CodeCombat community! Check out our"
@@ -722,9 +761,15 @@
     more_info_3: "is a good place to connect with fellow educators who are using CodeCombat."
 
   teachers_quote:
+<<<<<<< HEAD
     name: "Demo Form" # {change}
     title: "Request a Demo" # {change}
     subtitle: "Get your students started in less than an hour. You'll be able to <strong>set up a class, add students, and monitor their progress</strong> as they learn computer science." # {change}
+=======
+    name: "Demo Form"
+    title: "Request a Demo"
+    subtitle: "Get your students started in less than an hour. You'll be able to <strong>create a class, add students, and monitor their progress</strong> as they learn computer science."
+>>>>>>> refs/remotes/codecombat/master
     email_exists: "User exists with this email."
     phone_number: "Phone number"
     phone_number_help: "Where can we reach you during the workday?"
@@ -749,6 +794,7 @@
     college_plus: "College or higher"
     anything_else: "Anything else we should know?"
 <<<<<<< HEAD
+<<<<<<< HEAD
     thanks_header: "Request Received!" # {change}
     thanks_sub_header: "Thanks for expressing interest in CodeCombat for your school."
     thanks_p: "We'll be in touch soon! If you need to get in contact, you can reach us at:" # {change}
@@ -758,9 +804,12 @@
     conversion_warning: "WARNING: Your current account is a <em>Student Account</em>. Once you submit this form, your account will be converted into a Teacher Account."
 =======
     thanks_header: "Thanks for requesting a demo!" # {change}
+=======
+    thanks_header: "Thanks for requesting a demo!"
+>>>>>>> refs/remotes/codecombat/master
     thanks_p: "We'll be in touch soon. Questions? Email us:"
-    thanks_anon: "Log in or create an account to set up a class, add your students, and monitor their progress as they learn computer science." # {change}
-    thanks_logged_in: "Set up a class, add your students, and monitor their progress as they learn computer science." # {change}
+    thanks_anon: "Log in or create an account to set up a class, add your students, and monitor their progress as they learn computer science."
+    thanks_logged_in: "Set up a class, add your students, and monitor their progress as they learn computer science."
     setup_a_class: "Set Up a Class"
 >>>>>>> refs/remotes/codecombat/master
 
@@ -871,7 +920,7 @@
     social_facebook: "Like CodeCombat on Facebook"
     social_twitter: "Follow CodeCombat on Twitter"
     social_gplus: "Join CodeCombat on Google+"
-    social_hipchat: "Chat with us in the public CodeCombat Slack channel"
+    social_slack: "Chat with us in the public CodeCombat Slack channel"
     contribute_to_the_project: "Contribute to the project"
 
   clans:
@@ -1297,7 +1346,7 @@
     join_desc_3: ", or find us in our "
     join_desc_4: "and we'll go from there!"
     join_url_email: "Email us"
-    join_url_hipchat: "public Slack channel"
+    join_url_slack: "public Slack channel"
     archmage_subscribe_desc: "Get emails on new coding opportunities and announcements."
     artisan_introduction_pref: "We must construct additional levels! People be clamoring for more content, and we can only build so many ourselves. Right now your workstation is level one; our level editor is barely usable even by its creators, so be wary. If you have visions of campaigns spanning for-loops to"
     artisan_introduction_suf: ", then this class might be for you."
