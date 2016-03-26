@@ -77,7 +77,7 @@ module.exports = class User extends CocoModel
 
   # y = a * ln(1/b * (x + c)) + 1
   @levelFromExp: (xp) ->
-    if xp > 0 then Math.floor(a * Math.log((1/b) * (xp + c))) + 1 else 1
+    if xp > 0 then Math.floor(a * Math.log((1 / b) * (xp + c))) + 1 else 1
 
   # x = b * e^((y-1)/a) - c
   @expForLevel: (level) ->
@@ -137,15 +137,30 @@ module.exports = class User extends CocoModel
     application.tracker.identify announcesActionAudioGroup: @announcesActionAudioGroup unless me.isAdmin()
     @announcesActionAudioGroup
 
+  getCampaignAdsGroup: ->
+    return @campaignAdsGroup if @campaignAdsGroup
+    # group = me.get('testGroupNumber') % 2
+    # @campaignAdsGroup = switch group
+    #   when 0 then 'no-ads'
+    #   when 1 then 'leaderboard-ads'
+    @campaignAdsGroup = 'leaderboard-ads'
+    @campaignAdsGroup = 'no-ads' if me.isAdmin()
+    application.tracker.identify campaignAdsGroup: @campaignAdsGroup unless me.isAdmin()
+    @campaignAdsGroup
+
   getHomepageGroup: ->
     # Only testing on en-US so localization issues are not a factor
-    return 'new-home-student' unless _.string.startsWith(me.get('preferredLanguage', true) or 'en-US', 'en')
+    return 'home-legacy' unless _.string.startsWith(me.get('preferredLanguage', true) or 'en-US', 'en')
     return @homepageGroup if @homepageGroup
-    group = me.get('testGroupNumber') % 4
+    group = parseInt(util.getQueryVariable('variation'))
+    group ?= me.get('testGroupNumber') % 5
     @homepageGroup = switch group
-      when 0, 1 then 'new-home-characters'
-      when 2, 3 then 'new-home-student'
-    application.tracker.identify newHomepageGroup: @homepageGroup unless me.isAdmin()
+      when 0 then 'home-legacy'
+      when 1 then 'home-teachers'
+      when 2 then 'home-legacy-left'
+      when 3 then 'home-dropdowns'
+      when 4 then 'home-play-for-free'
+    application.tracker.identify homepageGroup: @homepageGroup unless me.isAdmin()
     return @homepageGroup
 
   # Signs and Portents was receiving updates after test started, and also had a big bug on March 4, so just look at test from March 5 on.
@@ -184,6 +199,9 @@ module.exports = class User extends CocoModel
   isOnPremiumServer: ->
     me.get('country') in ['china', 'brazil']
     
+
+  # Function meant for "me"
+    
   spy: (user, options={}) ->
     user = user.id or user # User instance, user ID, email or username
     options.url = '/auth/spy'
@@ -195,6 +213,18 @@ module.exports = class User extends CocoModel
   stopSpying: (options={}) ->
     options.url = '/auth/stop-spying'
     options.type = 'POST'
+    @fetch(options)
+
+  logout: (options={}) ->
+    options.type = 'POST'
+    options.url = '/auth/logout'
+    FB?.logout?()
+    options.success ?= ->
+      location = _.result(currentView, 'logoutRedirectURL')
+      if location
+        window.location = location
+      else
+        window.location.reload()
     @fetch(options)
 
   fetchGPlusUser: (gplusID, options={}) ->
