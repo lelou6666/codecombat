@@ -6,7 +6,11 @@ module.exports = class Classrooms extends CocoCollection
   url: '/db/classroom'
   
   initialize: ->
+<<<<<<< HEAD
     @on 'sync', ->
+=======
+    @on 'sync', =>
+>>>>>>> refs/remotes/codecombat/master
       for classroom in @models
         classroom.capitalizeLanguageName()
     super(arguments...)

@@ -4,6 +4,19 @@ block page_nav
   include ./teacher-dashboard-nav.jade
 
 block content
+<<<<<<< HEAD
+=======
+  if !me.isTeacher() && view.ownedClassrooms.size()
+    .alert.alert-danger.text-center
+      .container
+        // DNT: Temporary
+        h3 ATTENTION: Please upgrade your account to a Teacher Account.
+        p
+          | We are transitioning to a new improved classroom management system for instructors.
+          | Please convert your account to ensure you retain access to your classrooms. 
+        a.btn.btn-primary.btn-lg(href="/teachers/update-account") Upgrade to teacher account
+    
+>>>>>>> refs/remotes/codecombat/master
   .container
     h1(data-i18n="courses.title")
     h2(data-i18n="courses.subtitle")
@@ -18,7 +31,11 @@ block content
         .col-sm-9
           +course-info(course)
 <<<<<<< HEAD
+<<<<<<< HEAD
         .col-sm-3
+=======
+        .col-sm-3.hidden
+>>>>>>> refs/remotes/codecombat/master
           .play-level-form
             .form-group
               label.control-label
@@ -30,6 +47,7 @@ block content
                     | Python
                   option(value="javascript")
                     | JavaScript
+<<<<<<< HEAD
                   option(value="coffeescript")
                     | CoffeeScript (Experimental)
                   option(value="clojure")
@@ -38,12 +56,23 @@ block content
                     | Lua
                   option(value="java")
                     | Java
+=======
+                  //- option(value="coffeescript")
+                  //-   | CoffeeScript (Experimental)
+                  //- option(value="clojure")
+                  //-   | Clojure (Experimental)
+                  //- option(value="lua")
+                  //-   | Lua
+                  //- option(value="java")
+                  //-   | Java
+>>>>>>> refs/remotes/codecombat/master
             .form-group
               label.control-label
                 span(data-i18n="courses.select_level")
                 | :
                 select.form-control
                   // TODO: Automate this list @scott
+<<<<<<< HEAD
                   option(value="TODO")
                     | 1. Dungeons of Kithgard
             a.btn.btn-large.btn-primary
@@ -120,6 +149,17 @@ mixin course(courseInstance, classMemberCount)
 mixin course-info(course)
   .course-info
     .text-h2.semibold
+=======
+                  option(value='TODO')
+                    | 1. Dungeons of Kithgard
+            a.btn.btn-lg.btn-primary
+              span(data-i18n="courses.play_level")
+          .clearfix       
+            
+mixin course-info(course)
+  .course-info
+    .text-h4.semibold
+>>>>>>> refs/remotes/codecombat/master
       = course.get('name')
     p= course.get('description')
     p.concepts.semibold
@@ -129,7 +169,22 @@ mixin course-info(course)
         span(data-i18n="concepts." + concept)
         if course.get('concepts').indexOf(concept) !== course.get('concepts').length - 1
           span.spr ,
+<<<<<<< HEAD
     a.btn.btn-large.btn-primary(href="TODO")
       span(data-i18n="courses.print_guide")
     a.btn.btn-large.btn-primary(href="TODO")
       span(data-i18n="courses.view_guide_online")
+=======
+        
+    if me.isTeacher() || view.ownedClassrooms.size()
+      if view.guideLinks[course.id]
+        //- a.btn.btn-primary(href=view.guideLinks[course.id] class=(me.isAnonymous() ? 'disabled' : ''))
+        //-   span(data-i18n="courses.print_guide")
+        a.btn.btn-primary(href=view.guideLinks[course.id] class=(me.isAnonymous() ? 'disabled' : ''))
+          span(data-i18n="courses.view_guide_online")
+      else
+        i.small
+          | (
+          span(data-i18n='teacher.guides_coming_soon')
+          | )
+>>>>>>> refs/remotes/codecombat/master

@@ -2,6 +2,7 @@
 @import "app/styles/mixins"
 @import "app/styles/style-flat"
 
+<<<<<<< HEAD
 $grey-light: #f5f5f5
 $grey-medium: #ebebeb
 $grey-dark: #c9c9c9
@@ -14,20 +15,62 @@ $grey-darker: #9b9b9b
   background-color: $grey-light
 
 #teacher-class-view
+=======
+.alternating-background:nth-child(2n+1)
+  background-color: #ebebeb
+
+.alternating-background:nth-child(2n)
+  background-color: $gray-lighter
+
+#teacher-class-view
+  .breadcrumbs
+    color: #065e73
+    a
+      color: #065e73
+      
+  h3
+    display: inline-block
+    
+  h3 ~ .edit-classroom
+    color: black
+    text-decoration: underline
+    
+  .classroom-details
+    .small-details
+      margin-bottom: 4px
+
+  .concept
+    & span
+      white-space: nowrap
+    &.forest
+      color: $forest
+    &.gold
+      color: $gold
+    &+.concept:before
+      content: ', '
+>>>>>>> refs/remotes/codecombat/master
 
   ul.nav-tabs
     border: none
     .tab-spacer
       float: left
       width: 15px
+<<<<<<< HEAD
       height: 47px
+=======
+      height: 48px
+>>>>>>> refs/remotes/codecombat/master
       border-bottom: thin solid #979797
       
     .tab-filler
       // Triggers block formatting context
       // http://stackoverflow.com/questions/1260122/expand-a-div-to-take-the-remaining-width
       overflow: hidden
+<<<<<<< HEAD
       height: 47px
+=======
+      height: 48px
+>>>>>>> refs/remotes/codecombat/master
       border-bottom: thin solid #979797
       
     li > a
@@ -43,7 +86,44 @@ $grey-darker: #9b9b9b
       border-bottom: thin solid #979797
     li.active
       border-bottom: none
+<<<<<<< HEAD
     
+=======
+  
+  .bulk-assign-controls
+    float: right
+    margin-bottom: -9999px
+    margin-top: 20px
+    select
+      margin-left: 7px
+    .assign-to-selected-students
+      margin-left: 10px
+    .enroll-selected-students
+      margin-left: 56px
+    
+  .students-table
+    width: 100%
+    .student-info-col
+      width: 240px
+    .checkbox-col
+      width: 75px
+    .latest-level-col
+      width: 320px
+    .view-class-col
+      width: 20px
+      
+    th
+      font-weight: normal
+      white-space: nowrap
+      vertical-align: bottom
+    td
+      height: 66px
+      
+    .enroll-student-button
+      margin-left: 33%
+      margin-left: calc((100% - 120px - 36px) * 0.6)
+
+>>>>>>> refs/remotes/codecombat/master
   .inline-student-list
     padding-left: 0
     
@@ -56,8 +136,15 @@ $grey-darker: #9b9b9b
     
     li
       display: inline
+<<<<<<< HEAD
       a
         white-space: nowrap
+=======
+      .inline-student-name
+        white-space: nowrap
+        text-decoration: underline
+
+>>>>>>> refs/remotes/codecombat/master
     li:not(:last-child):after
       content: ', '
       
@@ -75,42 +162,79 @@ $grey-darker: #9b9b9b
     overflow: ellipsis
     font-weight: bold
     // line-height: 20px
+<<<<<<< HEAD
     
   th
     font-weight: normal
     white-space: nowrap
     vertical-align: bottom
+=======
+>>>>>>> refs/remotes/codecombat/master
   
   .sort-button
     border: none
     background: none
     font-weight: bold
     text-decoration: underline
+<<<<<<< HEAD
   
   td
     padding-top: 15px
     padding-bottom: 15px
     
+=======
+
+>>>>>>> refs/remotes/codecombat/master
   .edit-student-button
     color: black
     font-weight: bold
     text-decoration: underline
 
     .glyphicon
+<<<<<<< HEAD
       color: $grey-darker
+=======
+      color: $gray-light
+      
+  .remove-student-link
+    color: $burgandy
+    font-weight: bold
+    text-decoration: underline
+    line-height: 16px
+>>>>>>> refs/remotes/codecombat/master
       
   // Course Progress tab
   
   #course-progress-tab
+<<<<<<< HEAD
     .student-levels-table
+=======
+    .course-overview-row
+      margin-top: 50px
+      border: thin solid gray
+      border-radius: 8px
+      
+    .student-levels-table
+      margin-top: 80px
+
+      .sort-buttons
+        padding-left: 75px
+        margin-bottom: 5px
+      
+>>>>>>> refs/remotes/codecombat/master
     .student-levels-row, .course-overview-row
       padding-left: 75px
       padding-top: 15px
       padding-bottom: 30px
+<<<<<<< HEAD
+=======
+      
+>>>>>>> refs/remotes/codecombat/master
     .student-levels-progress, .course-overview-progress
       max-width: 880px
       margin: -5px
       margin-top: 5px
+<<<<<<< HEAD
     .progress-dot
       margin: 5px
   
@@ -126,16 +250,30 @@ $grey-darker: #9b9b9b
     height: 20px
     
   // stuff that feels specific to this page
+=======
+      
+    .progress-dot
+      margin: 5px
+      
+  // Checkboxes
+>>>>>>> refs/remotes/codecombat/master
   .checkbox-flat
     margin: 8px auto
 
   // TODO: Move to style-flat?
   .view-class-arrow
+<<<<<<< HEAD
     color: $grey-darker
+=======
+    float: right
+    margin-right: 16px
+    color: $gray-light
+>>>>>>> refs/remotes/codecombat/master
     // height: 100%
     font-size: 35px
     line-height: 35px
     align-self: center
+<<<<<<< HEAD
     .view-class-arrow-inner 
       color: $grey-darker
       &:hover
@@ -144,6 +282,13 @@ $grey-darker: #9b9b9b
 
   // TODO: Scott is refactoring this
     
+=======
+    .view-class-arrow-inner
+      color: $gray-lighter
+      &:hover
+        text-decoration: none
+
+>>>>>>> refs/remotes/codecombat/master
   .progress-dot
     display: inline-block
     margin-right: 6px
@@ -152,7 +297,11 @@ $grey-darker: #9b9b9b
     border-radius: 50%
     // margin-top: 23px
     // margin-bottom: 23px
+<<<<<<< HEAD
     background: $grey-dark
+=======
+    background: $gray-light
+>>>>>>> refs/remotes/codecombat/master
     position: relative
     .dot-label
       padding-top: 2px
@@ -165,7 +314,11 @@ $grey-darker: #9b9b9b
     background: $forest
     .tooltip-inner
       color: $forest
+<<<<<<< HEAD
       border: 1px solid $forest
+=======
+      border-color: $forest
+>>>>>>> refs/remotes/codecombat/master
     .tooltip-arrow
       border-top-color: $forest
     
@@ -173,6 +326,7 @@ $grey-darker: #9b9b9b
     background: $gold
     .tooltip-inner
       color: $navy
+<<<<<<< HEAD
       border: 1px solid $navy
     .tooltip-arrow
       border-top-color: $navy
@@ -202,3 +356,24 @@ $grey-darker: #9b9b9b
     border-width: 5px 10px 0
     border-top-color: white
     
+=======
+      border-color: $navy
+    .tooltip-arrow
+      border-top-color: $navy
+
+  // Code copying buttons
+
+  .copy-button-group
+    input
+      height: 50px
+      width: 220px
+      background: #fafafa
+      border: thin solid #979797
+      text-align: center
+      
+    button
+      height: 50px
+      width: 210px
+      float: right
+      
+>>>>>>> refs/remotes/codecombat/master

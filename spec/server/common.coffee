@@ -5,14 +5,13 @@ console.log 'IT BEGINS'
 if process.env.COCO_MONGO_HOST
   throw Error('Tests may not run with production environment')
 
-GLOBAL._ = require 'lodash'
-_.str = require 'underscore.string'
-_.mixin(_.str.exports())
-GLOBAL.mongoose = require 'mongoose' # TODO: Remove, otherwise it hides when the server is missing a mongoose require
+require '../../server' # make lodash globally available
+mongoose = require 'mongoose'
 path = require 'path'
 GLOBAL.testing = true
 GLOBAL.tv4 = require 'tv4' # required for TreemaUtils to work
 
+<<<<<<< HEAD
 models_path = [
   '../../server/analytics/AnalyticsUsersActive'
   '../../server/articles/Article'
@@ -39,6 +38,9 @@ for m in models_path
   model = path.basename(m)
   #console.log('model=' + model)
   GLOBAL[model] = require m
+=======
+User = require '../../server/models/User'
+>>>>>>> refs/remotes/codecombat/master
 
 async = require 'async'
 
@@ -70,9 +72,6 @@ GLOBAL.saveModels = (models, done) ->
 
 GLOBAL.simplePermissions = [target: 'public', access: 'owner']
 GLOBAL.ObjectId = mongoose.Types.ObjectId
-GLOBAL.request = require('request').defaults({jar: true})
-Promise = require 'bluebird'
-Promise.promisifyAll(request, {multiArgs: true})
 
 GLOBAL.unittest = {}
 unittest.users = unittest.users or {}

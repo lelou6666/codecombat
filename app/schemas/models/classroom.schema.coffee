@@ -16,7 +16,11 @@ _.extend ClassroomSchema.properties,
   ageRangeMax: { type: 'string' }
   archived:
     type: 'boolean'
+<<<<<<< HEAD
     default: 'false'
+=======
+    default: false
+>>>>>>> refs/remotes/codecombat/master
     description: 'Visual only; determines if the classroom is in the "archived" list of the normal list.'
 
 c.extendBasicProperties ClassroomSchema, 'Classroom'

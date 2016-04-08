@@ -10,6 +10,7 @@ module.exports = class CourseInstances extends CocoCollection
     options.data ?= {}
     options.data.ownerID = ownerID
     @fetch(options)
+<<<<<<< HEAD
 
   getByCourseAndClassroom: (courseID, classroomID) ->
     courseID = courseID.id or courseID
@@ -23,3 +24,5 @@ module.exports = class CourseInstances extends CocoCollection
     classroomID = classroomID.id or classroomID
     _.filter @models, (courseInstance) ->
       courseInstance.get('classroomID') == classroomID
+=======
+>>>>>>> refs/remotes/codecombat/master

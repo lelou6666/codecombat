@@ -2,7 +2,11 @@ User = require 'models/User';
 
 module.exports = new User(
   {
+<<<<<<< HEAD
     "_id": "56d0e483c7798baa414146bd",
+=======
+    "_id": "teacher1",
+>>>>>>> refs/remotes/codecombat/master
     "testGroupNumber": 169,
     "anonymous": false,
     "__v": 0,

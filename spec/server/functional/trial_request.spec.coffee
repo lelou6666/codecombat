@@ -2,6 +2,10 @@ require '../common'
 utils = require '../utils'
 _ = require 'lodash'
 Promise = require 'bluebird'
+User = require '../../../server/models/User'
+TrialRequest = require '../../../server/models/TrialRequest'
+Prepaid = require '../../../server/models/Prepaid'
+request = require '../request'
 
 fixture = {
   type: 'subscription'
@@ -13,8 +17,6 @@ fixture = {
 }
 
 describe 'POST /db/trial.request', ->
-  URL = getURL('/db/trial.request')
-  ownURL = getURL('/db/trial.request/-/own')
 
   it 'sets type and properties given', utils.wrap (done) ->
     yield utils.clearModels([User, TrialRequest])
@@ -63,6 +65,29 @@ describe 'POST /db/trial.request', ->
     expect(res.statusCode).toBe(422)
     done()
 
+  it 'updates an existing TrialRequest if there is one', utils.wrap (done) ->
+    yield utils.clearModels([User, TrialRequest])
+    @user = yield utils.initUser()
+    yield utils.loginUser(@user)
+    fixture.properties.email = @user.get('email')
+    [res, body] = yield request.postAsync(getURL('/db/trial.request'), { json: fixture })
+    expect(res.statusCode).toBe(201)
+    expect(body._id).toBeDefined()
+    trialRequest = yield TrialRequest.findById(body._id)
+
+    update = {
+      type: 'course'
+      properties:
+        location: 'Bahamas'
+    }
+    [res, body] = yield request.postAsync(getURL('/db/trial.request'), { json: update })
+    expect(body.type).toBe('course')
+    expect(body.properties.location).toBe('Bahamas')
+    expect(body._id).toBe(trialRequest.id)
+    count = yield TrialRequest.count()
+    expect(count).toBe(1)
+    done()
+
 describe 'GET /db/trial.request', ->
 
   beforeEach utils.wrap (done) ->
@@ -73,7 +98,7 @@ describe 'GET /db/trial.request', ->
     [res, body] = yield request.postAsync(getURL('/db/trial.request'), { json: fixture })
     @trialRequest = yield TrialRequest.findById(body._id)
     done()
-  
+
   it 'returns 403 to non-admins', utils.wrap (done) ->
     [res, body] = yield request.getAsync(getURL('/db/trial.request'))
     expect(res.statusCode).toEqual(403)
@@ -105,13 +130,13 @@ describe 'GET /db/trial.request?applicant=:userID', ->
     expect(body.length).toBe(1)
     expect(body[0]._id).toBe(@trialRequest1.id)
     done()
-    
+
   it 'returns 403 when non-admins request other people\'s trial requests', utils.wrap (done) ->
     [res, body] = yield request.getAsync(getURL('/db/trial.request?applicant='+@user2.id), { json: true })
     expect(res.statusCode).toEqual(403)
     done()
 
-    
+
 describe 'PUT /db/trial.request/:handle', ->
   putURL = null
 
@@ -124,14 +149,14 @@ describe 'PUT /db/trial.request/:handle', ->
     @trialRequest = yield TrialRequest.findById(body._id)
     putURL = getURL('/db/trial.request/'+@trialRequest.id)
     done()
-    
+
   it 'returns 403 to non-admins', ->
     [res, body] = yield request.putAsync(getURL("/db/trial.request/#{@trialRequest.id}"))
     expect(res.statusCode).toEqual(403)
     done()
-    
+
   describe 'set status to "approved"', ->
-    
+
     beforeEach utils.wrap (done) ->
       @admin = yield utils.initAdmin()
       yield utils.loginUser(@admin)
@@ -139,23 +164,14 @@ describe 'PUT /db/trial.request/:handle', ->
       expect(res.statusCode).toBe(200)
       expect(body.status).toBe('approved')
       setTimeout done, 10 # let changes propagate
-    
+
     it 'sets reviewDate and reviewer', utils.wrap (done) ->
       trialRequest = yield TrialRequest.findById(@trialRequest.id)
       expect(trialRequest.get('reviewDate')).toBeDefined()
       expect(trialRequest.get('reviewer').equals(@admin._id))
       expect(new Date(trialRequest.get('reviewDate'))).toBeLessThan(new Date())
       done()
-    
-    it 'gives the user two enrollments', utils.wrap (done) ->
-      prepaids = yield Prepaid.find({'properties.trialRequestID': @trialRequest._id})
-      expect(prepaids.length).toEqual(1)
-      prepaid = prepaids[0]
-      expect(prepaid.get('type')).toEqual('course')
-      expect(prepaid.get('creator')).toEqual(@user.get('_id'))
-      expect(prepaid.get('maxRedeemers')).toEqual(2)
-      done()
-      
+
     it 'enables teacherNews for the user', utils.wrap (done) ->
       user = yield User.findById(@user._id)
       expect(user.get('emails')?.teacherNews?.enabled).toEqual(true)
@@ -177,8 +193,4 @@ describe 'PUT /db/trial.request/:handle', ->
       expect(trialRequest.get('reviewer').equals(@admin._id))
       expect(new Date(trialRequest.get('reviewDate'))).toBeLessThan(new Date())
       done()
-      
-    it 'does not give the user two enrollments', utils.wrap (done) ->
-      prepaids = yield Prepaid.find({'properties.trialRequestID': @trialRequest._id})
-      expect(prepaids.length).toEqual(0)
-      done()
+

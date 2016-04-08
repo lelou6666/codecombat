@@ -2,7 +2,14 @@ require '../common'
 utils = require '../utils'
 _ = require 'lodash'
 Promise = require 'bluebird'
+<<<<<<< HEAD
 requestAsync = Promise.promisify(request, {multiArgs: true})
+=======
+request = require '../request'
+requestAsync = Promise.promisify(request, {multiArgs: true})
+Course = require '../../../server/models/Course'
+User = require '../../../server/models/User'
+>>>>>>> refs/remotes/codecombat/master
 
 describe 'GET /db/course', ->
   beforeEach utils.wrap (done) ->
@@ -28,14 +35,22 @@ describe 'GET /db/course/:handle', ->
   it 'returns Course by id', utils.wrap (done) ->
     [res, body] = yield request.getAsync {uri: getURL("/db/course/#{@course.id}"), json: true}
     expect(res.statusCode).toBe(200)
+<<<<<<< HEAD
     expect(_.isObject(body)).toBe(true)
+=======
+    expect(body._id).toBe(@course.id)
+>>>>>>> refs/remotes/codecombat/master
     done()
 
 
   it 'returns Course by slug', utils.wrap (done) ->
     [res, body] = yield request.getAsync {uri: getURL("/db/course/some-name"), json: true}
     expect(res.statusCode).toBe(200)
+<<<<<<< HEAD
     expect(_.isObject(body)).toBe(true)
+=======
+    expect(body._id).toBe(@course.id)
+>>>>>>> refs/remotes/codecombat/master
     done()
 
 

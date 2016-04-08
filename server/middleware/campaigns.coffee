@@ -4,9 +4,15 @@ wrap = require 'co-express'
 Promise = require 'bluebird'
 database = require '../commons/database'
 mongoose = require 'mongoose'
+<<<<<<< HEAD
 Campaign = require '../campaigns/Campaign'
 parse = require '../commons/parse'
 LevelSession = require '../levels/sessions/LevelSession'
+=======
+Campaign = require '../models/Campaign'
+parse = require '../commons/parse'
+LevelSession = require '../models/LevelSession'
+>>>>>>> refs/remotes/codecombat/master
 
 module.exports =
   fetchByType: wrap (req, res, next) ->

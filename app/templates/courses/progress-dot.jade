@@ -1,15 +1,28 @@
 if !total
+<<<<<<< HEAD
   span.small-details(data-i18n="TODO")
+=======
+  span.small-details(data-i18n='teacher.no_progress')
+>>>>>>> refs/remotes/codecombat/master
     | No Progress
 else
   .fraction-students.small-details
     = complete
     | /
     = total
+<<<<<<< HEAD
     span(data-i18n="TODO")
       | &nbsp;Students
   .percent-students.small-details
     = complete / total * 100
     | %
     span.spl(data-i18n="TODO")
+=======
+    span.spl(data-i18n='teacher.students')
+      | Students
+  .percent-students.small-details
+    = Math.floor(complete / total * 100)
+    | %
+    span.spl(data-i18n='teacher.complete')
+>>>>>>> refs/remotes/codecombat/master
       | Complete

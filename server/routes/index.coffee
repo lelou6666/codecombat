@@ -26,31 +26,42 @@ module.exports.setup = (app) ->
   app.get('/db/classroom', mw.classrooms.getByOwner)
   app.get('/db/classroom/:handle/member-sessions', mw.classrooms.fetchMemberSessions)
   app.get('/db/classroom/:handle/members', mw.classrooms.fetchMembers) # TODO: Use mw.auth?
+<<<<<<< HEAD
+=======
+  app.get('/db/classroom/:handle', mw.auth.checkLoggedIn()) # TODO: Finish migrating route, adding now so 401 is returned
+>>>>>>> refs/remotes/codecombat/master
   
   Course = require '../models/Course'
   app.get('/db/course', mw.rest.get(Course))
   app.get('/db/course/:handle', mw.rest.getByHandle(Course))
   
+<<<<<<< HEAD
   Classroom = require '../models/Classroom'
   app.get('/db/classroom', mw.auth.checkLoggedIn(), mw.rest.get(Classroom)) #TODO
   
   Campaign = require '../models/Campaign'
   app.get('/db/campaign', mw.campaigns.fetchByType) #TODO
   
+=======
+  app.get('/db/campaign', mw.campaigns.fetchByType) #TODO
+  
+  app.post('/db/course_instance/:handle/members', mw.auth.checkLoggedIn(), mw.courseInstances.addMembers)
+  
+>>>>>>> refs/remotes/codecombat/master
   app.get('/db/user', mw.users.fetchByGPlusID, mw.users.fetchByFacebookID)
 
   app.get '/db/products', require('./db/product').get
   
   TrialRequest = require '../models/TrialRequest'
   app.get('/db/trial.request', mw.trialRequests.fetchByApplicant, mw.auth.checkHasPermission(['admin']), mw.rest.get(TrialRequest))
-  app.post('/db/trial.request', mw.auth.checkLoggedIn(), mw.trialRequests.post)
+  app.post('/db/trial.request', mw.trialRequests.post)
   app.get('/db/trial.request/:handle', mw.auth.checkHasPermission(['admin']), mw.rest.getByHandle(TrialRequest))
   app.put('/db/trial.request/:handle', mw.auth.checkHasPermission(['admin']), mw.trialRequests.put)
 
   app.get '/healthcheck', (req, res) ->
     try
       async = require 'async'
-      User = require '../users/User'
+      User = require '../models/User'
       async.waterfall [
         (callback) ->
           User.find({}).limit(1).exec(callback)

@@ -22,10 +22,17 @@ module.exports = class TeacherClassesView extends RootView
     'click .edit-classroom': 'onClickEditClassroom'
     'click .archive-classroom': 'onClickArchiveClassroom'
     'click .unarchive-classroom': 'onClickUnarchiveClassroom'
+<<<<<<< HEAD
     'click .add-students-button': 'onClickAddStudents'
     'click .create-classroom-button': 'onClickCreateClassroom'
 
   constructor: (options) ->
+=======
+    'click .add-students-btn': 'onClickAddStudentsButton'
+    'click .create-classroom-btn': 'onClickCreateClassroomButton'
+
+  initialize: (options) ->
+>>>>>>> refs/remotes/codecombat/master
     super(options)
     @classrooms = new Classrooms()
     @classrooms.fetchMine()
@@ -59,7 +66,10 @@ module.exports = class TeacherClassesView extends RootView
       dot.tooltip({
         html: true
         container: dot
+<<<<<<< HEAD
         template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-arrow-cover"></div><div class="tooltip-inner"></div></div>'
+=======
+>>>>>>> refs/remotes/codecombat/master
       })
     
   onLoaded: ->
@@ -73,7 +83,11 @@ module.exports = class TeacherClassesView extends RootView
     @openModalView(modal)
     @listenToOnce modal, 'hide', @render
 
+<<<<<<< HEAD
   onClickCreateClassroom: (e) ->
+=======
+  onClickCreateClassroomButton: (e) ->
+>>>>>>> refs/remotes/codecombat/master
     classroom = new Classroom({ ownerID: me.id })
     modal = new ClassroomSettingsModal({ classroom: classroom })
     @openModalView(modal)
@@ -82,15 +96,24 @@ module.exports = class TeacherClassesView extends RootView
       @addFreeCourseInstances()
       @render()
     
+<<<<<<< HEAD
   onClickAddStudents: (e) ->
     classroomID = $(e.target).data('classroom-id')
+=======
+  onClickAddStudentsButton: (e) ->
+    classroomID = $(e.currentTarget).data('classroom-id')
+>>>>>>> refs/remotes/codecombat/master
     classroom = @classrooms.get(classroomID)
     modal = new InviteToClassroomModal({ classroom: classroom })
     @openModalView(modal)
     @listenToOnce modal, 'hide', @render
     
   onClickArchiveClassroom: (e) ->
+<<<<<<< HEAD
     classroomID = $(e.target).data('classroom-id')
+=======
+    classroomID = $(e.currentTarget).data('classroom-id')
+>>>>>>> refs/remotes/codecombat/master
     classroom = @classrooms.get(classroomID)
     classroom.set('archived', true)
     classroom.save {}, {
@@ -99,7 +122,11 @@ module.exports = class TeacherClassesView extends RootView
     }
     
   onClickUnarchiveClassroom: (e) ->
+<<<<<<< HEAD
     classroomID = $(e.target).data('classroom-id')
+=======
+    classroomID = $(e.currentTarget).data('classroom-id')
+>>>>>>> refs/remotes/codecombat/master
     classroom = @classrooms.get(classroomID)
     classroom.set('archived', false)
     classroom.save {}, {
