@@ -5,7 +5,7 @@ wrap = require 'co-express'
 Promise = require 'bluebird'
 parse = require '../commons/parse'
 request = require 'request'
-User = require '../users/User'
+User = require '../models/User'
 utils = require '../lib/utils'
 mongoose = require 'mongoose'
 
@@ -20,7 +20,7 @@ module.exports =
     
   checkLoggedIn: ->
     return (req, res, next) ->
-      if not req.user
+      if (not req.user) or (req.user.isAnonymous())
         return next new errors.Unauthorized('You must be logged in.')
       next()
     
