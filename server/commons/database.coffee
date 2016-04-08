@@ -19,7 +19,7 @@ module.exports =
   
     # Hack around Mongoose not exporting Aggregate so that we can patch its exec, too
     # https://github.com/LearnBoost/mongoose/issues/1910
-    Level = require '../levels/Level'
+    Level = require '../models/Level'
     Aggregate = Level.aggregate().constructor
     maxAge = (Math.random() * 10 + 10) * 60 * 1000  # Randomize so that each server doesn't refresh cache from db at same times
     mongooseCache.install(mongoose, {max: 1000, maxAge: maxAge, debug: false}, Aggregate)
@@ -56,6 +56,7 @@ module.exports =
       doc.set('original', doc._id)
       doc.set('creator', req.user._id)
 
+    return doc
 
   applyCustomSearchToDBQ: (req, dbq) ->
     specialParameters = ['term', 'project', 'conditions']
@@ -125,11 +126,11 @@ module.exports =
   assignBody: (req, doc, options={}) ->
     if _.isEmpty(req.body)
       throw new errors.UnprocessableEntity('No input')
-
-    props = doc.schema.editableProperties.slice()
+      
+    props = doc.schema.statics.editableProperties.slice()
 
     if doc.isNew
-      props = props.concat doc.schema.postEditableProperties
+      props = props.concat doc.schema.statics.postEditableProperties
 
     if doc.schema.uses_coco_permissions and req.user
       isOwner = doc.getAccessForUserObjectId(req.user._id) is 'owner'
@@ -152,7 +153,7 @@ module.exports =
     # so that validation doesn't get hung up on Date objects in the documents.
     delete obj.dateCreated
     tv4 = require('tv4').tv4
-    result = tv4.validateMultiple(obj, doc.schema.jsonSchema)
+    result = tv4.validateMultiple(obj, doc.schema.statics.jsonSchema)
     if not result.valid
       throw new errors.UnprocessableEntity('JSON-schema validation failed', { validationErrors: result.errors })
 

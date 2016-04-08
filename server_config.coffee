@@ -1,6 +1,7 @@
 config = {}
 
 config.unittest = global.testing
+config.proxy = process.env.COCO_PROXY
 
 config.tokyo = process.env.TOKYO or false
 config.saoPaulo = process.env.SAOPAULO or false
@@ -68,6 +69,8 @@ config.hipchat =
   main: process.env.COCO_HIPCHAT_API_KEY or ''
   tower: process.env.COCO_HIPCHAT_TOWER_API_KEY or ''
   artisans: process.env.COCO_HIPCHAT_ARTISANS_API_KEY or ''
+
+config.slackToken = process.env.COCO_SLACK_TOKEN or ''
 
 config.queue =
   accessKeyId: process.env.COCO_AWS_ACCESS_KEY_ID or ''

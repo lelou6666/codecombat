@@ -1,8 +1,8 @@
 authentication = require 'passport'
 LocalStrategy = require('passport-local').Strategy
-User = require '../users/User'
-UserHandler = require '../users/user_handler'
-LevelSession = require '../levels/sessions/LevelSession'
+User = require '../models/User'
+UserHandler = require '../handlers/user_handler'
+LevelSession = require '../models/LevelSession'
 config = require '../../server_config'
 errors = require '../commons/errors'
 languages = require '../routes/languages'
@@ -81,7 +81,7 @@ module.exports.setup = (app) ->
 
   app.post('/auth/logout', (req, res) ->
     req.logout()
-    res.end()
+    res.send({})
   )
 
   app.post('/auth/reset', (req, res) ->

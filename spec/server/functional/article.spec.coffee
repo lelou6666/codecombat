@@ -2,7 +2,10 @@ require '../common'
 utils = require '../utils'
 _ = require 'lodash'
 Promise = require 'bluebird'
+request = require '../request'
 requestAsync = Promise.promisify(request, {multiArgs: true})
+Article = require '../../../server/models/Article'
+User = require '../../../server/models/User'
 
 describe 'GET /db/article', ->
   articleData1 = { name: 'Article 1', body: 'Article 1 body cow', i18nCoverage: [] }
@@ -468,11 +471,11 @@ describe 'POST /db/article/:handle/new-version', ->
     yield postNewVersion({ name: 'Article name', body: 'New body', commitMessage: 'Commit message' })
     
     
-  it 'sends a notification to artisan and main HipChat channels', utils.wrap (done) ->
-    hipchat = require '../../../server/hipchat'
-    spyOn(hipchat, 'sendHipChatMessage')
+  it 'sends a notification to artisan and main Slack channels', utils.wrap (done) ->
+    slack = require '../../../server/slack'
+    spyOn(slack, 'sendSlackMessage')
     yield postNewVersion({ name: 'Article name', body: 'New body' })
-    expect(hipchat.sendHipChatMessage).toHaveBeenCalled()
+    expect(slack.sendSlackMessage).toHaveBeenCalled()
     done()
   
 describe 'version fetching endpoints', ->
